@@ -9,6 +9,7 @@ import 'package:flutter_plugin_mtime/model/vo/movie_item_vo.dart';
 import 'package:flutter_plugin_mtime/model/vo/movie_vo.dart';
 import 'package:flutter_plugin_mtime/net/request.dart';
 import 'package:flutter_plugin_mtime/ui/common_utils.dart';
+import 'package:flutter_plugin_mtime/ui/img.dart';
 import 'package:flutter_plugin_mtime/widget/rating.dart';
 import 'package:palette_generator/palette_generator.dart';
 
@@ -66,24 +67,22 @@ class MovieState extends State<MoviePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _colorBg,
+      appBar: _buildBar(),
       body: Stack(
         children: <Widget>[
           Container(
-            color: _colorBg,
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: Container(
-              color: const Color(0x44000000),
-            ),
+            color: const Color(0x44000000),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _buildBar(),
-              _builHead(),
-              _buildRate(),
-              _buildDetail(),
-            ],
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _builHead(),
+                _buildRate(),
+                _buildDetail(),
+              ],
+            ),
           )
         ],
       ),
@@ -95,7 +94,7 @@ class MovieState extends State<MoviePage> {
     return AppBar(
       title: Text('电影'),
       elevation: 0,
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0x44000000),
     );
   }
 
@@ -106,17 +105,25 @@ class MovieState extends State<MoviePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.all(10.0),
-          child: Hero(
-              tag: widget.movieItemVO.img,
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                child: CachedNetworkImage(
-                  imageUrl: CommonUtils.getImgMid(widget.movieItemVO.img),
-                  fit: BoxFit.fitHeight,
-                  height: 200,
-                ),
-              )),
+          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ImagePage(widget.movieItemVO.img)));
+            },
+            child: Hero(
+                tag: widget.movieItemVO.img,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  child: CachedNetworkImage(
+                    imageUrl: CommonUtils.getImgMid(widget.movieItemVO.img),
+                    fit: BoxFit.fitHeight,
+                    height: 200,
+                  ),
+                )),
+          ),
         ),
         SizedBox(
           width: 10.0,
@@ -189,7 +196,7 @@ class MovieState extends State<MoviePage> {
   _buildRate() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-      margin: EdgeInsets.all(20.0),
+      margin: EdgeInsets.all(15.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(10.0)),
         color: Color(0x77000000),
@@ -217,9 +224,6 @@ class MovieState extends State<MoviePage> {
               )
             ],
           ),
-          SizedBox(
-            height: 10,
-          )
         ],
       ),
     );
@@ -232,6 +236,7 @@ class MovieState extends State<MoviePage> {
         return Column(
           children: <Widget>[
             _buildIntro(),
+            _buildActors(),
           ],
         );
         break;
@@ -246,7 +251,7 @@ class MovieState extends State<MoviePage> {
   //简介
   _buildIntro() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
+      padding: EdgeInsets.symmetric(horizontal: 15.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -264,5 +269,100 @@ class MovieState extends State<MoviePage> {
         ],
       ),
     );
+  }
+
+  //演职员
+  _buildActors() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            '演职员',
+            style: TextStyle(fontSize: 18),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            height: 220,
+            child: ListView.builder(
+              itemBuilder: (BuildContext context, int index) {
+                return index == 0
+                    ? _buildActorCard(_movie.director.name,
+                        _movie.director.nameEn, _movie.director.img, '（导演）')
+                    : _buildActorCard(
+                        _movie.actors[index - 1].name,
+                        _movie.actors[index - 1].nameEn,
+                        _movie.actors[index - 1].img,
+                        '饰（' + _movie.actors[index - 1].roleName + '）',
+                      );
+              },
+              itemCount: _movie.actors == null ? 0 : _movie.actors.length + 1,
+              scrollDirection: Axis.horizontal,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  _buildActorCard(String name, String nameEn, String imgUrl, String roleName) {
+    return InkWell(
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ImagePage(imgUrl)));
+        },
+        child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 5.0),
+            width: 120,
+            child: Column(children: <Widget>[
+              Hero(
+                  tag: imgUrl,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    child: CachedNetworkImage(
+                      imageUrl: CommonUtils.getImgMid(imgUrl),
+                      errorWidget: Container(
+                        child: Center(
+                          child: Icon(Icons.error),
+                        ),
+                        height: 160,
+                      ),
+                      placeholder: Container(
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.white,
+                          ),
+                        ),
+                        height: 160,
+                      ),
+                      fit: BoxFit.fitHeight,
+                      height: 160,
+                    ),
+                  )),
+              SizedBox(
+                height: 10.0,
+              ),
+              Center(
+                child: Text(
+                  name.isEmpty ? nameEn : name,
+                  style: TextStyle(fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+              roleName.isEmpty
+                  ? SizedBox()
+                  : Center(
+                      child: Text(
+                        roleName,
+                        style: TextStyle(fontSize: 12, color: Colors.white70),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    )
+            ])));
   }
 }

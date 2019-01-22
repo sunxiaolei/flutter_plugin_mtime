@@ -1,4 +1,5 @@
 import 'package:flutter_plugin_mtime/model/vo/actor_vo.dart';
+import 'package:flutter_plugin_mtime/model/vo/director_vo.dart';
 
 class MovieVO {
   int movieId;
@@ -7,6 +8,7 @@ class MovieVO {
   num rate;
   String intro;
   List<ActorVO> actors;
+  DirectorVO director;
 
   MovieVO(
       {this.movieId,
@@ -14,5 +16,6 @@ class MovieVO {
       this.nameEn,
       this.rate,
       this.intro,
-      this.actors});
+      this.actors,
+      this.director});
 }

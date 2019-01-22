@@ -31,13 +31,25 @@ class HomeState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Mcolors.contentBackground,
+        title: Container(
+          padding: EdgeInsets.all(3.0),
+          child: Text(
+            'MTime',
+            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+          ),
+          decoration: BoxDecoration(
+              border: Border.all(width: 2.0, color: Colors.white),
+              borderRadius: BorderRadius.all(Radius.circular(3.0))),
+        ),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.search), onPressed: () {}),
+          IconButton(icon: Icon(Icons.account_circle), onPressed: () {}),
+        ],
+      ),
       body: Column(
         children: <Widget>[
-          SizedBox(
-            //状态栏高度
-            height: MediaQueryData.fromWindow(window).padding.top,
-          ),
-          _buildAppBar(),
           SizedBox(
             height: 20.0,
           ),
@@ -67,40 +79,6 @@ class HomeState extends State<HomePage> {
         hotStatus = PageStatus.ERROR;
       });
     });
-  }
-
-  //标题栏
-  _buildAppBar() {
-    return Container(
-      color: Mcolors.contentBackground,
-      height: 56.0,
-      padding: EdgeInsets.only(left: 18.0),
-      child: Row(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(3.0),
-            child: Text(
-              'MTime',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-            ),
-            decoration: BoxDecoration(
-                border: Border.all(width: 2.0, color: Colors.white),
-                borderRadius: BorderRadius.all(Radius.circular(3.0))),
-          ),
-          Expanded(
-            child: Container(
-              alignment: Alignment.centerRight,
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Icon(Icons.search),
-            ),
-          ),
-          Container(
-            child:
-                IconButton(icon: Icon(Icons.account_circle), onPressed: () {}),
-          )
-        ],
-      ),
-    );
   }
 
   //正在热映

@@ -1,4 +1,6 @@
 import 'package:flutter_plugin_mtime/model/dto/transform.dart';
+import 'package:flutter_plugin_mtime/model/vo/actor_vo.dart';
+import 'package:flutter_plugin_mtime/model/vo/director_vo.dart';
 import 'package:flutter_plugin_mtime/model/vo/movie_vo.dart';
 
 class MovieDTO implements Transform<MovieVO> {
@@ -29,7 +31,25 @@ class MovieDTO implements Transform<MovieVO> {
 
   @override
   MovieVO transform() {
-    MovieVO vo = MovieVO(intro: data.basic.story);
+    MovieVO vo = MovieVO(
+      intro: data.basic.story,
+      actors: data.basic.actors
+          .map((a) => ActorVO(
+                a.actorId,
+                a.name,
+                img: a.img,
+                nameEn: a.nameEn,
+                roleImg: a.roleImg,
+                roleName: a.roleName,
+              ))
+          .toList(),
+      director: DirectorVO(
+        data.basic.director.directorId,
+        data.basic.director.name,
+        img: data.basic.director.img,
+        nameEn: data.basic.director.nameEn,
+      ),
+    );
     return vo;
   }
 }
