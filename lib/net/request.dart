@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_plugin_mtime/model/dto/coming_movies_dto.dart';
 import 'package:flutter_plugin_mtime/model/dto/hot_movies_dto.dart';
 import 'package:flutter_plugin_mtime/model/dto/movie_dto.dart';
 import 'package:flutter_plugin_mtime/model/vo/movie_item_vo.dart';
@@ -20,9 +21,16 @@ class Request {
 
   //正在热映
   Future<List<MovieItemVO>> getHotMovies() async {
-    String reqAPi = Api.homelist;
+    String reqAPi = Api.hotlist;
     Response response = await _dio.get(reqAPi, data: {'locationId': 290});
     return HotMoviesDTO.fromJson(response.data).transform();
+  }
+
+  //即将上映
+  Future<List<MovieItemVO>> getComingMovies() async {
+    String reqAPi = Api.cominglist;
+    Response response = await _dio.get(reqAPi, data: {'locationId': 290});
+    return ComingDTO.fromJson(response.data).transform();
   }
 
   //正在热映

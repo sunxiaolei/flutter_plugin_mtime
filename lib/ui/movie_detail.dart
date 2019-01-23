@@ -79,7 +79,7 @@ class MovieState extends State<MoviePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 _builHead(),
-                _buildRate(),
+                widget.movieItemVO.t == 0 ? _buildRate() : SizedBox(),
                 _buildDetail(),
               ],
             ),
@@ -114,7 +114,7 @@ class MovieState extends State<MoviePage> {
                       builder: (context) => ImagePage(widget.movieItemVO.img)));
             },
             child: Hero(
-                tag: widget.movieItemVO.img,
+                tag: widget.movieItemVO.img + widget.movieItemVO.t.toString(),
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   child: CachedNetworkImage(
@@ -143,7 +143,12 @@ class MovieState extends State<MoviePage> {
                 height: 10,
               ),
               Text(
-                widget.movieItemVO.nameEn + '(' + widget.movieItemVO.year + ')',
+                widget.movieItemVO.nameEn == null
+                    ? '(' + widget.movieItemVO.year + ')'
+                    : widget.movieItemVO.nameEn +
+                        '(' +
+                        widget.movieItemVO.year +
+                        ')',
                 style: TextStyle(fontSize: 15),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -151,7 +156,9 @@ class MovieState extends State<MoviePage> {
                 height: 10,
               ),
               Text(
-                widget.movieItemVO.during + '分钟',
+                widget.movieItemVO.during == null
+                    ? ''
+                    : widget.movieItemVO.during + '分钟',
                 style: TextStyle(fontSize: 12, color: Colors.white70),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -180,7 +187,9 @@ class MovieState extends State<MoviePage> {
                 height: 10,
               ),
               Text(
-                widget.movieItemVO.commonSpecial,
+                widget.movieItemVO.commonSpecial == null
+                    ? ''
+                    : widget.movieItemVO.commonSpecial,
                 style: TextStyle(fontSize: 12, color: Colors.orange),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
@@ -215,7 +224,9 @@ class MovieState extends State<MoviePage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Text(
-                widget.movieItemVO.rate.toString(),
+                widget.movieItemVO.rate > 0
+                    ? widget.movieItemVO.rate.toString()
+                    : '--',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
               Rating(

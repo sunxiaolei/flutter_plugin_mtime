@@ -105,7 +105,7 @@ class Basic {
   String bigImage;
   String commentSpecial;
   Director director;
-  int hotRanking;
+  num hotRanking;
   String img;
   bool is3D;
   bool isDMAX;
@@ -116,23 +116,23 @@ class Basic {
   bool isTicket;
   String message;
   String mins;
-  int movieId;
-  int movieStatus;
+  num movieId;
+  num movieStatus;
   String name;
   String nameEn;
-  double overallRating;
-  int personCount;
+  num overallRating;
+  num personCount;
   String releaseArea;
   String releaseDate;
   bool sensitiveStatus;
-  int showCinemaCount;
-  int showDay;
-  int showtimeCount;
+  num showCinemaCount;
+  num showDay;
+  num showtimeCount;
   StageImg stageImg;
   String story;
   Style style;
-  int totalNominateAward;
-  int totalWinAward;
+  num totalNominateAward;
+  num totalWinAward;
   List<String> type;
   String url;
   Video video;
@@ -316,8 +316,8 @@ class Actors {
 
 class Award {
   List<String> awardList;
-  int totalNominateAward;
-  int totalWinAward;
+  num totalNominateAward;
+  num totalWinAward;
 
   Award({this.awardList, this.totalNominateAward, this.totalWinAward});
 
@@ -374,7 +374,7 @@ Map<String, dynamic> toJson() {
 }
 
 class StageImg {
-  int count;
+  num count;
   List<ListX> list;
 
   StageImg({this.count, this.list});
@@ -447,7 +447,7 @@ class Video {
   String title;
   String url;
   int videoId;
-  int videoSourceType;
+  num videoSourceType;
 
   Video(
       {this.count,
@@ -483,11 +483,11 @@ class Video {
 
 class BoxOffice {
   int movieId;
-  int ranking;
-  int todayBox;
+  num ranking;
+  num todayBox;
   String todayBoxDes;
   String todayBoxDesUnit;
-  int totalBox;
+  num totalBox;
   String totalBoxDes;
   String totalBoxUnit;
 
@@ -613,11 +613,11 @@ class Playlist {
 }
 
 class Related {
-  int goodsCount;
+  num goodsCount;
   List<String> goodsList;
-  int relateId;
+  num relateId;
   String relatedUrl;
-  int type;
+  num type;
 
   Related(
       {this.goodsCount,

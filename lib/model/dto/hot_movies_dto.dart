@@ -57,10 +57,20 @@ class HotMoviesDTO implements Transform<List<MovieItemVO>> {
     List<MovieItemVO> vos = List();
     if (ms != null) {
       vos = ms
-          .map((ms) => MovieItemVO(ms.id, ms.t, ms.tEn, ms.img, ms.r,
-              ms.movieType, ms.year, ms.rd, ms.d,
-              versions: ms.versions.map((v) => v.version).toList(),
-              commonSpecial: ms.commonSpecial))
+          .map((ms) => MovieItemVO(
+                ms.id,
+                0,
+                ms.t,
+                ms.img,
+                ms.movieType,
+                ms.year,
+                ms.rd,
+                versions: ms.versions.map((v) => v.version).toList(),
+                commonSpecial: ms.commonSpecial,
+                rate: ms.r,
+                nameEn: ms.tEn,
+                during: ms.d,
+              ))
           .toList();
     }
     return vos;
