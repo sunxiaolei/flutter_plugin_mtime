@@ -7,4 +7,8 @@ class Api {
 
   //影片详情
   static String getMovie = 'https://ticket-api-m.mtime.cn/movie/detail.api';
+
+  //热门影评
+  static String getMovieHotComment =
+      'https://ticket-api-m.mtime.cn/movie/hotComment.api';
 }

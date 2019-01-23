@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_plugin_mtime/model/dto/coming_movies_dto.dart';
+import 'package:flutter_plugin_mtime/model/dto/hot_comment_dto.dart';
 import 'package:flutter_plugin_mtime/model/dto/hot_movies_dto.dart';
 import 'package:flutter_plugin_mtime/model/dto/movie_dto.dart';
+import 'package:flutter_plugin_mtime/model/vo/hot_comment_vo.dart';
 import 'package:flutter_plugin_mtime/model/vo/movie_item_vo.dart';
 import 'package:flutter_plugin_mtime/model/vo/movie_vo.dart';
 import 'package:flutter_plugin_mtime/net/api.dart';
@@ -33,11 +35,18 @@ class Request {
     return ComingDTO.fromJson(response.data).transform();
   }
 
-  //正在热映
+  //影片详情
   Future<MovieVO> getMovieDetail(movieId) async {
     String reqAPi = Api.getMovie;
     Response response =
         await _dio.get(reqAPi, data: {'locationId': 290, 'movieId': movieId});
     return MovieDTO.fromJson(response.data).transform();
+  }
+
+  //热门评论
+  Future<HotCommentVO> getMovieHotComment(movieId) async {
+    String reqAPi = Api.getMovieHotComment;
+    Response response = await _dio.get(reqAPi, data: {'movieId': movieId});
+    return HotCommentDTO.fromJson(response.data).transform();
   }
 }

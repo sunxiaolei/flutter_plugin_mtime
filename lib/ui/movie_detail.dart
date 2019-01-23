@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_plugin_base/constant/pagestatus.dart';
 import 'package:flutter_plugin_base/utils/log_utils.dart';
 import 'package:flutter_plugin_mtime/constant/colors.dart';
+import 'package:flutter_plugin_mtime/model/vo/comment_item_vo.dart';
+import 'package:flutter_plugin_mtime/model/vo/hot_comment_vo.dart';
 import 'package:flutter_plugin_mtime/model/vo/movie_item_vo.dart';
 import 'package:flutter_plugin_mtime/model/vo/movie_vo.dart';
 import 'package:flutter_plugin_mtime/net/request.dart';
@@ -31,13 +33,16 @@ class MovieState extends State<MoviePage> {
   Color _colorBg = Mcolors.windowBackground;
 
   PageStatus detailStatus = PageStatus.LOADING;
+  PageStatus commentStatus = PageStatus.LOADING;
   MovieVO _movie;
+  HotCommentVO _hotComment;
 
   @override
   void initState() {
     super.initState();
     _updatePaletteGenerator();
     _getMovieData();
+    _getHotComment();
   }
 
   //更新背景
@@ -64,6 +69,20 @@ class MovieState extends State<MoviePage> {
     });
   }
 
+  _getHotComment() async {
+    Request().getMovieHotComment(widget.movieItemVO.id).then((comment) {
+      _hotComment = comment;
+      setState(() {
+        commentStatus = PageStatus.DATA;
+      });
+    }).catchError((error) {
+      Log.i(error.toString());
+      setState(() {
+        commentStatus = PageStatus.ERROR;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,6 +100,7 @@ class MovieState extends State<MoviePage> {
                 _builHead(),
                 widget.movieItemVO.t == 0 ? _buildRate() : SizedBox(),
                 _buildDetail(),
+                _buildHotComment(),
               ],
             ),
           )
@@ -376,4 +396,87 @@ class MovieState extends State<MoviePage> {
                     )
             ])));
   }
+
+  //热门评论
+  _buildHotComment() {
+    switch (commentStatus) {
+      case PageStatus.DATA:
+        return Column(
+          children: <Widget>[
+            _hotComment.listShort.length == 0
+                ? SizedBox()
+                : _buildShortCommentList(),
+            _hotComment.listLong.length == 0
+                ? SizedBox()
+                : _buildLongCommentList(),
+          ],
+        );
+        break;
+      case PageStatus.LOADING:
+      case PageStatus.EMPTY:
+      case PageStatus.ERROR:
+        return SizedBox();
+        break;
+    }
+  }
+
+  _buildShortCommentList() {
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
+        padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          color: Color(0x77000000),
+        ),
+        child: ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return _buildShortComment(_hotComment.listShort[index]);
+          },
+          itemCount: _hotComment.listShort.length,
+          shrinkWrap: true,
+        ));
+  }
+
+  _buildShortComment(CommentItemVO comment) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            CircleAvatar(
+              backgroundImage: CachedNetworkImageProvider(comment.headImg),
+              radius: 20.0,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(comment.nickname),
+                Rating(
+                  comment.rating,
+                  color: Colors.yellow,
+                  size: 13,
+                )
+              ],
+            )
+          ],
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Text(comment.content),
+        Divider(
+          color: Colors.white54,
+        )
+      ],
+    );
+  }
+
+  _buildLongCommentList() {
+    return SizedBox();
+  }
+
+  _buildLongComment() {}
 }
