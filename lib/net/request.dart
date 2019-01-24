@@ -2,7 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter_plugin_mtime/model/dto/coming_movies_dto.dart';
 import 'package:flutter_plugin_mtime/model/dto/hot_comment_dto.dart';
 import 'package:flutter_plugin_mtime/model/dto/hot_movies_dto.dart';
+import 'package:flutter_plugin_mtime/model/dto/long_comment_dto.dart';
 import 'package:flutter_plugin_mtime/model/dto/movie_dto.dart';
+import 'package:flutter_plugin_mtime/model/dto/short_comment_dto.dart';
+import 'package:flutter_plugin_mtime/model/vo/comment_item_vo.dart';
 import 'package:flutter_plugin_mtime/model/vo/hot_comment_vo.dart';
 import 'package:flutter_plugin_mtime/model/vo/movie_item_vo.dart';
 import 'package:flutter_plugin_mtime/model/vo/movie_vo.dart';
@@ -48,5 +51,21 @@ class Request {
     String reqAPi = Api.getMovieHotComment;
     Response response = await _dio.get(reqAPi, data: {'movieId': movieId});
     return HotCommentDTO.fromJson(response.data).transform();
+  }
+
+  //短评
+  Future<List<CommentItemVO>> getMovieShortComment(index, movieId) async {
+    String reqAPi = Api.getMovieShortComment;
+    Response response =
+        await _dio.get(reqAPi, data: {'pageIndex': index, 'movieId': movieId});
+    return ShortCommentDTO.fromJson(response.data).transform();
+  }
+
+  //长评
+  Future<List<CommentItemVO>> getMovieLongComment(index, movieId) async {
+    String reqAPi = Api.getMovieLongComment;
+    Response response =
+        await _dio.get(reqAPi, data: {'pageIndex': index, 'movieId': movieId});
+    return LongCommentDTO.fromJson(response.data).transform();
   }
 }

@@ -9,9 +9,12 @@ import 'package:flutter_plugin_mtime/model/vo/comment_item_vo.dart';
 import 'package:flutter_plugin_mtime/model/vo/hot_comment_vo.dart';
 import 'package:flutter_plugin_mtime/model/vo/movie_item_vo.dart';
 import 'package:flutter_plugin_mtime/model/vo/movie_vo.dart';
+import 'package:flutter_plugin_mtime/net/api.dart';
 import 'package:flutter_plugin_mtime/net/request.dart';
+import 'package:flutter_plugin_mtime/ui/comment_list.dart';
 import 'package:flutter_plugin_mtime/ui/common_utils.dart';
 import 'package:flutter_plugin_mtime/ui/img.dart';
+import 'package:flutter_plugin_mtime/ui/web.dart';
 import 'package:flutter_plugin_mtime/widget/rating.dart';
 import 'package:palette_generator/palette_generator.dart';
 
@@ -69,6 +72,7 @@ class MovieState extends State<MoviePage> {
     });
   }
 
+  //获取热门评论
   _getHotComment() async {
     Request().getMovieHotComment(widget.movieItemVO.id).then((comment) {
       _hotComment = comment;
@@ -420,63 +424,218 @@ class MovieState extends State<MoviePage> {
     }
   }
 
+  //短评列表
   _buildShortCommentList() {
     return Container(
         margin: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
-        padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+        padding: EdgeInsets.symmetric(vertical: 10.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
           color: Color(0x77000000),
         ),
-        child: ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            return _buildShortComment(_hotComment.listShort[index]);
-          },
-          itemCount: _hotComment.listShort.length,
-          shrinkWrap: true,
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(left: 15.0),
+              decoration: BoxDecoration(
+                color: Color(0x55424242),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    '短评',
+                    style: TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                  InkWell(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 12.0, horizontal: 15.0),
+                      child: Text('全部>'),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CommentList(
+                                  widget.movieItemVO.id,
+                                  widget.movieItemVO.name,
+                                  false)));
+                    },
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            ListView.builder(
+              itemBuilder: (BuildContext context, int index) {
+                return _buildShortComment(_hotComment.listShort[index]);
+              },
+              itemCount: _hotComment.listShort.length,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+            )
+          ],
         ));
   }
 
+  //短评
   _buildShortComment(CommentItemVO comment) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            CircleAvatar(
-              backgroundImage: CachedNetworkImageProvider(comment.headImg),
-              radius: 20.0,
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(comment.nickname),
-                Rating(
-                  comment.rating,
-                  color: Colors.yellow,
-                  size: 13,
-                )
-              ],
-            )
-          ],
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Text(comment.content),
-        Divider(
-          color: Colors.white54,
-        )
-      ],
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              CircleAvatar(
+                backgroundImage: CachedNetworkImageProvider(comment.headImg),
+                radius: 20.0,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(comment.nickname),
+                  Rating(
+                    comment.rating,
+                    color: Colors.yellow,
+                    size: 13,
+                  )
+                ],
+              )
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Text(comment.content),
+          Divider(
+            color: Colors.white54,
+          )
+        ],
+      ),
     );
   }
 
+  //长评列表
   _buildLongCommentList() {
-    return SizedBox();
+    return Container(
+      child: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(left: 15.0),
+            decoration: BoxDecoration(
+              color: Color(0x55424242),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  '长评',
+                  style: TextStyle(
+                    fontSize: 17,
+                  ),
+                ),
+                InkWell(
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 12.0, horizontal: 15.0),
+                    child: Text('全部>'),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CommentList(
+                                widget.movieItemVO.id,
+                                widget.movieItemVO.name,
+                                true)));
+                  },
+                )
+              ],
+            ),
+          ),
+          ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return _buildLongComment(_hotComment.listLong[index]);
+            },
+            itemCount: _hotComment.listLong.length,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+          )
+        ],
+      ),
+    );
   }
 
-  _buildLongComment() {}
+  //长评
+  _buildLongComment(CommentItemVO comment) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+      decoration: BoxDecoration(
+        color: Color(0x77000000),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            comment.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 20),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: <Widget>[
+              CircleAvatar(
+                backgroundImage: CachedNetworkImageProvider(comment.headImg),
+                radius: 20.0,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(comment.nickname),
+                  Rating(
+                    comment.rating,
+                    color: Colors.yellow,
+                    size: 13,
+                  )
+                ],
+              )
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Text(comment.content),
+          Center(
+            child: FlatButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => WebPage(Api.commentDetail(
+                              widget.movieItemVO.id, comment.commentId))));
+                },
+                child: Text('MORE >>')),
+          ),
+          Divider(
+            color: Colors.white54,
+          )
+        ],
+      ),
+    );
+  }
 }

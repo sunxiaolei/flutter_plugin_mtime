@@ -11,4 +11,16 @@ class Api {
   //热门影评
   static String getMovieHotComment =
       'https://ticket-api-m.mtime.cn/movie/hotComment.api';
+
+  //短评
+  static String getMovieShortComment =
+      'https://api-m.mtime.cn/Showtime/HotMovieComments.api';
+
+  //长评
+  static String getMovieLongComment =
+      'https://api-m.mtime.cn/Movie/HotLongComments.api';
+
+  static String commentDetail(int movieId, int commentId) {
+    return 'http://movie.mtime.com/$movieId/reviews/$commentId.html';
+  }
 }
